@@ -60,7 +60,6 @@ public class Task {
                 && status == task.status;
     }
 
-
     @Override
     public int hashCode() {
         int hash = 17;
