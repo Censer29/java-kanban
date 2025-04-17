@@ -1,10 +1,13 @@
+package task;
+
+import enums.Status;
 import java.util.Objects;
 
 public class Task {
 
+    private int id;
     private String name;
     private String description;
-    private int id;
     private Status status;
 
     public Task(int id, String name, String description, Status status) {

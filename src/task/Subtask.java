@@ -1,3 +1,8 @@
+package task;
+
+import enums.Status;
+import task.Task;
+
 import java.util.Objects;
 
 public class Subtask extends Task {

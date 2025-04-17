@@ -1,4 +1,9 @@
+package Test;
+
+import enums.Status;
 import org.junit.jupiter.api.Test;
+import task.Subtask;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class SubtaskTest {

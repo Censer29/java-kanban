@@ -1,8 +1,15 @@
+package task;
+
+import enums.Status;
+import task.Subtask;
+import task.Task;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class Epic extends Task {
 
-    private ArrayList<Subtask> subtaskList = new ArrayList<>();
+    private List<Subtask> subtaskList = new ArrayList<>();
 
     public Epic(String name, String description) {
         super(name, description);
@@ -21,7 +28,7 @@ public class Epic extends Task {
     }
 
     public ArrayList<Subtask> getSubtaskList() {
-        return subtaskList;
+        return (ArrayList<Subtask>) subtaskList;
     }
 
     public void setSubtaskList(ArrayList<Subtask> subtaskList) {
