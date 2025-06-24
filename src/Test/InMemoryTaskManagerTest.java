@@ -41,12 +41,12 @@ class InMemoryTaskManagerTest {
         //проверяем, что InMemoryTaskManager добавляет эпики и подзадачи и может найти их по id;
         final Epic flatRenovation = taskManager.addEpic(new Epic("Отремонтировать мотоцикл",
                 "Нужно успеть за отпуск"));
-        final Subtask flatRenovationSubtask1 = taskManager.addSubtask(new Subtask
-                ("Переобуть колёса", "Заднее обязательно!", flatRenovation.getId()));
-        final Subtask flatRenovationSubtask2 = taskManager.addSubtask(new Subtask
-                ("Заменить все жидкости", "Отходы утилизировать", flatRenovation.getId()));
-        final Subtask flatRenovationSubtask3 = taskManager.addSubtask(new Subtask
-                ("Заказать новый монитор", "С частотой 120Гц",
+        final Subtask flatRenovationSubtask1 = taskManager.addSubtask(new Subtask("Переобуть колёса",
+                "Заднее обязательно!", flatRenovation.getId()));
+        final Subtask flatRenovationSubtask2 = taskManager.addSubtask(new Subtask("Заменить все жидкости",
+                "Отходы утилизировать", flatRenovation.getId()));
+        final Subtask flatRenovationSubtask3 = taskManager.addSubtask(new Subtask("Заказать новый монитор",
+                "С частотой 120Гц",
                         flatRenovation.getId()));
         final Epic savedEpic = taskManager.getEpicByID(flatRenovation.getId());
         final Subtask savedSubtask1 = taskManager.getSubtaskByID(flatRenovationSubtask1.getId());
@@ -143,8 +143,8 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void deleteEpicByIdShouldReturnNullIfKeyIsMissing() {
-        taskManager.addEpic
-                (new Epic(1, "Отремонтировать мотоцикл", "Нужно успеть за отпуск", Status.IN_PROGRESS));
+        taskManager.addEpic(new Epic(1, "Отремонтировать мотоцикл",
+                "Нужно успеть за отпуск", Status.IN_PROGRESS));
         taskManager.deleteEpicByID(1);
         assertNull(taskManager.deleteTaskByID(1));
     }
@@ -164,7 +164,7 @@ class InMemoryTaskManagerTest {
 
 
     @Test
-    void TaskCreatedAndTaskAddedShouldHaveSameVariables() {
+    void taskCreatedAndTaskAddedShouldHaveSameVariables() {
         Task expected = new Task(1, "Помыть мотоцикл", "С новым шампунем", Status.DONE);
         taskManager.addTask(expected);
         List<Task> list = taskManager.getTasks();
