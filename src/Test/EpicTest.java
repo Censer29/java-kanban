@@ -1,4 +1,4 @@
-package test;
+package test;//изменил все пакеты на маленькую букву и название папки тоже
 
 import enums.Status;
 import org.junit.jupiter.api.Test;
