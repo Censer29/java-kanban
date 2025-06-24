@@ -1,7 +1,6 @@
 package task;
 
 import enums.Status;
-import task.Task;
 
 import java.util.Objects;
 
@@ -9,9 +8,10 @@ public class Subtask extends Task {
 
     private final int epicID;
 
+
     public Subtask(String name, String description, int epicID) {
         super(name, description);
-        if (epicID <= 0 || epicID == getId()) {
+        if ((epicID <= 0) || (epicID == getId())) {
             throw new IllegalArgumentException("Invalid epicID");
         }
         this.epicID = epicID;
@@ -22,6 +22,11 @@ public class Subtask extends Task {
         if (epicID <= 0 || epicID == id) {
             throw new IllegalArgumentException("Invalid epicID");
         }
+        this.epicID = epicID;
+    }
+
+    public Subtask(int epicID) {
+        super();
         this.epicID = epicID;
     }
 

@@ -43,10 +43,12 @@ public interface TaskManager {
 
     Task deleteTaskByID(int id);
 
-    Epic deleteEpicByID(int id);
+    void deleteEpicByID(int id);
 
     Subtask deleteSubtaskByID(int id);
 
-    List<Task> getHistory();
+    default List<Task> getHistory() {
+        return null;
+    }
 
 }

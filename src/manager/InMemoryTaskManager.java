@@ -174,12 +174,12 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Epic deleteEpicByID(int id) {
+    public void deleteEpicByID(int id) {
         ArrayList<Subtask> epicSubtasks = epics.get(id).getSubtaskList();
         for (Subtask subtask : epicSubtasks) {
             subtasks.remove(subtask.getId());
         }
-        return epics.remove(id);
+        epics.remove(id);
     }
 
     @Override

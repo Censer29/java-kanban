@@ -23,6 +23,14 @@ public class Task {
         this.status = Status.NEW;
     }
 
+    public Task(String description) {
+        this.description = description;
+    }
+
+    public Task() {
+
+    }
+
     public String getName() {
         return name;
     }
@@ -33,10 +41,6 @@ public class Task {
 
     public String getDescription() {
         return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public int getId() {

@@ -1,86 +1,125 @@
 package Test;
 
-import enums.Status;
-import manager.Managers;
-import manager.TaskManager;
+import manager.InMemoryHistoryManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import task.Epic;
 import task.Subtask;
 import task.Task;
-
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryHistoryManagerTest {
+    private InMemoryHistoryManager manager;
+    private Task task1;
+    private Task task2;
+    private Task task3;
+    private Epic epic;
+    private final Subtask subtask;
 
-    private static TaskManager taskManager;
+    InMemoryHistoryManagerTest(Subtask subtask) {
+        this.subtask = subtask;
+    }
 
     @BeforeEach
-    public void beforeEach() {
-        taskManager = Managers.getDefault();
+    void setUp() {
+        manager = new InMemoryHistoryManager();
+        task1 = new Task("Task 1");
+        task2 = new Task("Task 2");
+        task3 = new Task("Task 3");
+        new Subtask(1);
+        epic = new Epic();
+    }
+
+    // Базовые тесты добавления и удаления
+    @Test
+    void testAddSingleTask() {
+        manager.add(task1);
+        assertEquals(1, manager.getHistory().size());
+        assertEquals(task1, manager.getHistory().getFirst());
     }
 
     @Test
-    public void getHistoryShouldReturnListOf10Tasks() {
-        for (int i = 0; i < 20; i++) {
-            taskManager.addTask(new Task("Some name", "Some description"));
+    void testAddMultipleTasks() {
+        manager.add(task1);
+        manager.add(task2);
+        manager.add(task3);
+        assertEquals(3, manager.getHistory().size());
+        assertEquals(task1, manager.getHistory().get(0));
+        assertEquals(task2, manager.getHistory().get(1));
+        assertEquals(task3, manager.getHistory().get(2));
+    }
+
+    @Test
+    void testRemoveTask() {
+        manager.add(task1);
+        manager.add(task2);
+        manager.remove(task1.getId());
+        assertEquals(1, manager.getHistory().size());
+        assertEquals(task2, manager.getHistory().getFirst());
+    }
+
+    @Test
+    void testUpdateExistingTask() {
+        manager.add(task1);
+        Task updatedTask = new Task("Updated Task 1");
+        manager.add(updatedTask);
+        assertEquals(1, manager.getHistory().size());
+        assertEquals(updatedTask, manager.getHistory().getFirst());
+    }
+
+    // Тесты целостности данных
+    @Test
+    void testSubTaskRemoval() {
+        epic.addSubtask(subtask);
+        manager.add(epic);
+        manager.add(subtask);
+
+        manager.remove(subtask.getId());
+
+    }
+
+    @Test
+    void testTaskIdIntegrity() {
+        manager.add(task1);
+        task1.setId(2); // Попытка изменить ID
+        manager.add(task1);
+
+        assertEquals(1, manager.getHistory().size());
+        assertEquals(1, manager.getHistory().getFirst().getId());
+    }
+
+    // Тесты сеттеров
+    @Test
+    void testSetterChanges() {
+        manager.add(task1);
+        task1.setName("Changed Name");
+
+        Task storedTask = manager.getHistory().getFirst();
+        assertEquals("Task 1", storedTask.getName()); // Убедимся, что изменения не повлияли
+    }
+
+    @Test
+    void testConcurrentModification() {
+        manager.add(task1);
+        manager.add(task2);
+
+        List<Task> history = manager.getHistory();
+        history.removeFirst(); // Попытка изменить исходный список
+
+        assertEquals(2, manager.getHistory().size()); // Убедимся, что исходный список не изменился
+    }
+
+    // Тесты производительности
+    @Test
+    void testPerformance() {
+        for (int i = 0; i < 1000; i++) {
+            manager.add(new Task("Test " + i));
         }
 
-        List<Task> tasks = taskManager.getTasks();
-        for (Task task : tasks) {
-            taskManager.getTaskByID(task.getId());
-        }
-
-        List<Task> list = taskManager.getHistory();
-        assertEquals(10, list.size(), "Неверное количество элементов в истории ");
+        assertEquals(1000, manager.getHistory().size());
+        assertTrue(manager.getHistory().contains(new Task("Test 500")));
     }
 
-    @Test
-    public void getHistoryShouldReturnOldTaskAfterUpdate() {
-        Task washFloor = new Task("Помыть мотоцикл", "С новым шампунем");
-        taskManager.addTask(washFloor);
-        taskManager.getTaskByID(washFloor.getId());
-        taskManager.updateTask(new Task(washFloor.getId(), "Не забыть помыть мотоцикл",
-                "Можно и без шампуня", Status.IN_PROGRESS));
-        List<Task> tasks = taskManager.getHistory();
-        Task oldTask = tasks.getFirst();
-        assertEquals(washFloor.getName(), oldTask.getName(), "В истории не сохранилась старая версия задачи");
-        assertEquals(washFloor.getDescription(), oldTask.getDescription(),
-                "В истории не сохранилась старая версия задачи");
-
-    }
-
-    @Test
-    public void getHistoryShouldReturnOldEpicAfterUpdate() {
-        Epic flatRenovation = new Epic("Отремонтировать мотоцикл", "Нужно успеть за отпуск");
-        taskManager.addEpic(flatRenovation);
-        taskManager.getEpicByID(flatRenovation.getId());
-        taskManager.updateEpic(new Epic(flatRenovation.getId(), "Новое имя", "новое описание",
-                Status.IN_PROGRESS));
-        List<Task> epics = taskManager.getHistory();
-        Epic oldEpic = (Epic) epics.getFirst();
-        assertEquals(flatRenovation.getName(), oldEpic.getName(),
-                "В истории не сохранилась старая версия эпика");
-        assertEquals(flatRenovation.getDescription(), oldEpic.getDescription(),
-                "В истории не сохранилась старая версия эпика");
-    }
-
-    @Test
-    public void getHistoryShouldReturnOldSubtaskAfterUpdate() {
-        Epic flatRenovation = new Epic("Отремонтировать мотоцикл", "Нужно успеть за отпуск");
-        taskManager.addEpic(flatRenovation);
-        Subtask flatRenovationSubtask3 = new Subtask("Заказать новый монитор", "С частотой 120Гц",
-                flatRenovation.getId());
-        taskManager.addSubtask(flatRenovationSubtask3);
-        taskManager.getSubtaskByID(flatRenovationSubtask3.getId());
-        taskManager.updateSubtask(new Subtask(flatRenovationSubtask3.getId(), "Новое имя",
-                "новое описание", Status.IN_PROGRESS, flatRenovation.getId()));
-        List<Task> subtasks = taskManager.getHistory();
-        Subtask oldSubtask = (Subtask) subtasks.getFirst();
-        assertEquals(flatRenovationSubtask3.getName(), oldSubtask.getName(),
-                "В истории не сохранилась старая версия эпика");
-        assertEquals(flatRenovationSubtask3.getDescription(), oldSubtask.getDescription(),
-                "В истории не сохранилась старая версия эпика");
-    }
 }
