@@ -24,7 +24,7 @@ public class Main {
         inMemoryTaskManager.addEpic(repair);
         System.out.println(repair);
 
-        Subtask repairSubtask1 = new Subtask ("Переобуть колёса", "Заднее обязательно!",
+        Subtask repairSubtask1 = new Subtask("Переобуть колёса", "Заднее обязательно!",
                 repair.getId());
         Subtask repairSubtask2 = new Subtask("Заменить все жидкости", "Отходы утилизировать",
                 repair.getId());
