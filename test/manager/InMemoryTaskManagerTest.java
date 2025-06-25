@@ -1,4 +1,4 @@
-package test;
+package manager;
 
 import enums.Status;
 import manager.Managers;
